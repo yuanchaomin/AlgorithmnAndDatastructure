@@ -13,6 +13,7 @@ class LinkedList:
         self.size = 0
         self.head = ListNode(-1)
         self.tail = ListNode(-1)
+        self.head.next = self.tail
 
     def search(self, GivenValue:int):
         index = 0
@@ -27,13 +28,13 @@ class LinkedList:
                 index += 1
         return preP,p, index
 
-
     def getNodeByIndex(self, givenIndex:int) -> ListNode:
-
+        index = -1
+        p = self.head
         if givenIndex > self.size:
             raise ValueError("The GivenIndex should be less than the size of the LinkedList")
-        index = 0
-        p = self.head
+        elif self.head.next.val == -1:
+            raise ValueError("Can not get any node from am empty LinkedList")
         while p.next:
             if index == givenIndex:
                 return p
@@ -50,58 +51,53 @@ class LinkedList:
     def addAtHead(self,val:int) -> None:
         if val is None:
             return
-        if not self.head.next:
-            newHead = ListNode(val)
-            self.head.next = newHead
-            newHead.next = self.tail
+        if self.head.next.val == -1:
+            self.head.next = ListNode(val)
+            self.head.next.next = self.tail
         else:
             oldHead = self.head.next
             newHead = ListNode(val)
             self.head.next = newHead
             newHead.next = oldHead
-            self.size += 1
+        self.size +=1
 
     def addAtTail(self, val:int) -> None:
         if val is None:
             return
         p = self.head
-        while p.next:
+        while p.next and p.next.val != -1:
             p = p.next
-
         p.next = ListNode(val)
-        if not p.next.next:
-            p.next.next = self.tail
-
-
-        print("Now the size of list is ", p.next.next)
-
+        p.next.next = self.tail
         self.size += 1
 
     def deleteHead(self) -> None:
         p = self.head
-        if p.next:
+        if self.head.next.val == -1:
+            raise ValueError("Eempty LinkedList has no elements, thus can not perform delete operation")
+        else:
             p.next = p.next.next
-
-        return
 
     def deleteTail(self) -> None:
         preP = None
         p = self.head
-        if not p.next:
-            return
-
+        if self.head.next.val == -1:
+            raise ValueError("Eempty LinkedList has no elements, thus can not perform delete operation")
         while p.next:
             preP = p
             p = p.next
-
-        preP.next = p
+        preP.next = p.next
 
     def addAtIndex(self, index:int, val:int) -> None:
 
-        if index == 0:
+        if index < 0:
+            raise ValueError("Index must be positive")
+        elif index == 0:
             return self.addAtHead(val)
         elif index == self.size - 1:
             return self.addAtTail(val)
+        elif (index > self.size -1):
+            raise ValueError("Index cannot larger than length of LinkedList")
         else:
             foundedNode = self.getNodeByIndex(index)
             preNode = self.getNodeByIndex(index - 1)
@@ -111,11 +107,14 @@ class LinkedList:
         return
 
     def deleteAtIndex(self, index:int) -> None:
-
-        if index == 0:
+        if index < 0:
+            raise ValueError("Index must be positive")
+        elif index == 0:
             return self.deleteHead()
         elif index == self.size - 1:
             return self.deleteTail()
+        elif (index > self.size -1):
+            raise ValueError("Index cannot larger than length of LinkedList")
         else:
             foundedNode = self.getNodeByIndex(index)
             preNode = self.getNodeByIndex(index - 1)
@@ -124,9 +123,10 @@ class LinkedList:
 
     def printAllValue(self) -> None:
         p = self.head
-        while p.next:
+        while p.next :
             p = p.next
-            print(p.val)
+            if p.val != -1:
+                print(p.val)
 
 
 
